@@ -4,13 +4,15 @@ from bs4 import BeautifulSoup
 from Platforms.platform import Platform
 
 class Dmoj (Platform):
-    pattern = r'https://dmoj.uclv.edu.cu/problem/([^/]*)'
+    name = "DMOJ"
+    url_patterns = [ r'https://dmoj.uclv.edu.cu/problem/([^/]*)' ]
 
     def is_valid_problem_url(self, url):
-        if re.match(self.pattern, url):
-            return True
+        for p in self.url_patterns:
+            if re.match(p, url):
+                return True
         return False
-
+    
     def get_test_cases(self, url):
         if not self.is_valid_problem_url(self, url):
             raise ValueError(f"{url} is not a valid dmoj problem url")
@@ -27,12 +29,12 @@ class Dmoj (Platform):
                 tests.append((testscases[i], testscases[i + 1]))
         return tests
 
-
     def get_problem_id(self, url):
-        match = re.search(self.pattern, url)
-        if match:
-            idContest = match.group(1)
-            return idContest
+        for p in self.url_patterns:
+            match = re.search(p, url)
+            if match:
+                idContest = match.group(1)
+                return idContest
         return None
 
     def get_time_memory_limits(self, url):
@@ -44,8 +46,6 @@ class Dmoj (Platform):
         
         limits = []
         for problem_info in soup.find_all('div', {'class', 'problem-info-entry'}):
-
-
             if problem_info.getText().strip().count("Time limit:") > 0:
                 time_limit = problem_info.find('span', {'class', 'pi-value'})
                 limits.append(float(time_limit.getText().strip()[:-1]) * 1000)

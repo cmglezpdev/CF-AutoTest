@@ -5,13 +5,19 @@ from bs4 import BeautifulSoup
 from Platforms.platform import Platform
 
 class Codeforces (Platform):
-    pProblemset = r'https://codeforces.com/problemset/problem/(\d+)/([A-Z0-9]+)'
-    pContest = r'https://codeforces.com/contest/(\d+)/problem/([A-Z0-9]+)'
-    pGym = r'https://codeforces.com/gym/(\d+)/problem/([A-Z0-9]+)'
+    name = "CODEFORCES"
+    url_patterns = [
+        r'https://codeforces.com/problemset/problem/(\d+)/([A-Z0-9]+)',
+        r'https://codeforces.com/contest/(\d+)/problem/([A-Z0-9]+)',
+        r'https://codeforces.com/gym/(\d+)/problem/([A-Z0-9]+)'
+    ]
+
+    # def __init__(self, url: str) -> None:
 
     def is_valid_problem_url(self, url):
-        if re.match(self.pProblemset, url) or re.match(self.pContest, url) or re.match(self.pGym, url):
-            return True
+        for p in self.url_patterns:
+            if re.match(p, url):
+                return True
         return False
 
     def get_test_cases(self, url):
@@ -57,24 +63,12 @@ class Codeforces (Platform):
         return tests
 
     def get_problem_id(self, url):
-        match1 = re.search(self.pProblemset, url)
-        if match1:
-            idContest = match1.group(1)
-            idProblem = match1.group(2)
-            return idContest + idProblem
-
-        match2 = re.search(self.pContest, url)
-        if match2:
-            idContest = match2.group(1)
-            idProblem = match2.group(2)
-            return idContest + idProblem
-
-        match3 = re.search(self.pGym, url)
-        if match3:
-            idContest = match3.group(1)
-            idProblem = match3.group(2)
-            return idContest + idProblem
-
+        for p in self.url_patterns:
+            match = re.search(p, url)
+            if match:
+                idContest = match.group(1)
+                idProblem = match.group(2)
+                return idContest + idProblem
         return None
 
     def get_time_memory_limits(self, url):
