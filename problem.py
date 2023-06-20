@@ -25,6 +25,10 @@ class Problem:
             self.link = url
             self.problemId = self.platform.get_problem_id(self.platform, url)
             self.testCases = self.platform.get_test_cases(self.platform, url)
+            time_limit, memory_limit = self.platform.get_time_memory_limits(self.platform, url)
+            self.timeLimit = time_limit
+            self.memoryLimit = memory_limit
+
             self._create_files(" ")
 
     def process_problem(self):
@@ -75,10 +79,8 @@ class Problem:
                 
                 try:
                     with open(finput, "r") as input_file:
-                        # Establecer límite de memoria en 1 GB (1000000000 bytes)
-                        memory_limit = 1000000000
-                        resource.setrlimit(resource.RLIMIT_AS, (memory_limit, memory_limit))
-                        result = subprocess.run([binary], timeout=1, stdin=input_file, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                        resource.setrlimit(resource.RLIMIT_AS, (self.memoryLimit * 1024, self.memoryLimit * 1024))
+                        result = subprocess.run([binary], timeout=self.timeLimit / 1000, stdin=input_file, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                         
                         time_used = resource.getrusage(resource.RUSAGE_CHILDREN).ru_utime
                         memory_used = resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss
@@ -89,7 +91,7 @@ class Problem:
                         if result_stderr:
                             print(result_stout, result_stderr)
                             print_veredict("RE")
-                        elif memory_limit < memory_used:
+                        elif self.memoryLimit < memory_used:
                             print_veredict("MLE")
                         else:
                             output_filename = f"{self.folder}/output.txt"

@@ -14,3 +14,9 @@ class Platform (ABC):
     @abstractmethod
     def get_problem_id(self, url):
         pass
+
+    @abstractmethod
+    def get_time_memory_limits(self, url):
+        pass
+
+    

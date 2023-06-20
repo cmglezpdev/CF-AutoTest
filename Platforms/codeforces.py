@@ -77,6 +77,16 @@ class Codeforces (Platform):
 
         return None
 
+    def get_time_memory_limits(self, url):
+        if not self.is_valid_problem_url(self, url):
+            raise ValueError(f"{url} is not a valid codeforces problem url")
 
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        time_limit_div = soup.find('div', {'class', 'time-limit'}) 
+        memory_limit_div = soup.find('div', {'class', 'memory-limit'})
 
-
+        time_limit   = int(time_limit_div.contents[1].split(" ")[0]) * 1000
+        memory_limit = int(memory_limit_div.contents[1].split(" ")[0]) * 1024
+        
+        return (time_limit, memory_limit)
