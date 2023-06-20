@@ -11,6 +11,8 @@ class Problem:
     memoryLimit: int
     platform:    Union[Platform, None]
     testCases:   list[(str, str)]
+    folder:      str
+    code_file:   str
 
     def __init__(self, url: str):
         self.platform = self.select_platform(url)
@@ -25,16 +27,17 @@ class Problem:
     def create_files(self, base: str):
         try:
             tests = self.testCases
-            if not os.path.exists(self.problemId):
+            self.folder = self.problemId
+            if not os.path.exists(self.folder):
                 os.mkdir(self.problemId)
 
             for i, test in enumerate(tests):
                 self._create_test_case_file(self.problemId, test, i)
 
 
-            cpp_filename = os.path.join(self.problemId, f"{self.problemId}.cpp")
-            if not os.path.exists(cpp_filename):
-                with open(cpp_filename, 'w'):
+            self.code_file = os.path.join(self.problemId, f"{self.problemId}.cpp")
+            if not os.path.exists(self.code_file):
+                with open(self.code_file, 'w'):
                     pass
 
             print(f"{len(tests)} were created in the directory {self.problemId}")
