@@ -5,8 +5,8 @@ from problem import Problem
 
 
 def main(url):  
-    problem = Problem(url)
-    if problem.platform:
+    if Problem.select_platform(url):
+        problem = Problem(url)
         problem.process_problem()
 
 
