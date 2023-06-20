@@ -4,7 +4,7 @@ import resource
 import subprocess
 from typing import Union
 
-from Platforms import Platform, Codeforces, AtCoder
+from Platforms import Platform, Codeforces, AtCoder, Dmoj
 from veredict import print_veredict
 
 class Problem:
@@ -20,7 +20,6 @@ class Problem:
 
     def __init__(self, url: str):
         self.platform = self.select_platform(url)
-
         if self.platform:
             self.link = url
             self.problemId = self.platform.get_problem_id(self.platform, url)
@@ -28,8 +27,9 @@ class Problem:
             time_limit, memory_limit = self.platform.get_time_memory_limits(self.platform, url)
             self.timeLimit = time_limit
             self.memoryLimit = memory_limit
-
             self._create_files(" ")
+        else:
+            raise ValueError("The link is not a problem of a platform")
 
     def process_problem(self):
         modif_time = os.path.getmtime(self.code_file)
