@@ -11,8 +11,6 @@ class Codeforces (Platform):
         r'https://codeforces.com/gym/(\d+)/problem/([A-Z0-9]+)'
     ]
 
-    # def __init__(self, url: str) -> None:
-
     def is_valid_problem_url(self, url):
         for p in self.url_patterns:
             if re.match(p, url):
