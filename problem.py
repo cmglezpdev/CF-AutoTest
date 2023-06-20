@@ -1,5 +1,4 @@
 import os
-import requests
 import resource
 import subprocess
 from typing import Union
