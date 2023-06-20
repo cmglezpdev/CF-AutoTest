@@ -150,4 +150,8 @@ class Problem:
 
     @staticmethod
     def select_platform(url: str) -> Union[Platform, None]:
-        return Codeforces
+        platforms: Platform = [Codeforces, AtCoder, Dmoj]
+        for p in platforms:
+            if p.is_valid_problem_url(p, url):
+                return p
+        return None
